@@ -1,0 +1,16 @@
+﻿  Game.cpp
+C:\Users\zacja\source\repos\BasicPlatformer_2\BasicPlatformer_2\Game.cpp(79,38): warning C4244: '=': conversion from 'unsigned int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\zacja\source\repos\BasicPlatformer_2\BasicPlatformer_2\Game.cpp(80,39): warning C4244: '=': conversion from 'unsigned int' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  main.cpp
+C:\Users\zacja\source\repos\BasicPlatformer_2\BasicPlatformer_2\main.cpp(70,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
+  BasicPlatformer_2.vcxproj -> C:\Users\zacja\source\repos\BasicPlatformer_2\x64\Debug\BasicPlatformer_2.exe
