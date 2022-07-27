@@ -7,12 +7,13 @@
 // Game-related State data
 SpriteRenderer* Renderer;
 GameObject* Player;
-std::vector<GameObject*> EnemiesRow;
-std::vector<GameObject*> EnemiesRow1;
-std::vector<GameObject*> EnemiesRow2;
-std::vector<std::vector<GameObject*>> Enemies;
-GameObject* Enemy;
-GameObject* Enemy1;
+GameLevel* one;
+//std::vector<GameObject*> EnemiesRow;
+//std::vector<GameObject*> EnemiesRow1;
+//std::vector<GameObject*> EnemiesRow2;
+//std::vector<std::vector<GameObject*>> Enemies;
+//GameObject* Enemy;
+//GameObject* Enemy1;
 
 // Initial size of the player paddle
 const glm::vec2 PLAYER_SIZE(100.0f, 100.0f);
@@ -51,35 +52,40 @@ void Game::Init()
 	Renderer = new SpriteRenderer(myShader);
 	// load textures
 	ResourceManager::LoadTexture("Textures/awesomeface.png", true, "face");
+	ResourceManager::LoadTexture("Textures/block_solid.png", false, "block_solid");
+	one = new GameLevel;
+	one->Load("Levels/one.lvl", this->Width, this->Height/2);
+	//this->Levels.push_back(one);
+	this->Level = 0;
 	glm::vec2 playerPos = glm::vec2(this->Width / 2.0f - PLAYER_SIZE.x / 2.0f, this->Height - PLAYER_SIZE.y);
 	Player = new GameObject(playerPos, PLAYER_SIZE, ResourceManager::GetTexture("face"));
 	
 	glm::vec2 EnemyPos = glm::vec2(this->Width / 2.0f - ENEMY_SIZE.x / 2.0f, 50.f);
 	//Enemy = new GameObject(EnemyPos, ENEMY_SIZE, ResourceManager::GetTexture("face"));
 	
-	for (int i = 0; i < 10; i++)
-	{
-		Enemy = new GameObject(EnemyPos, ENEMY_SIZE, ResourceManager::GetTexture("face"));
-		EnemiesRow.push_back(Enemy);
-		Enemy = new GameObject(EnemyPos, ENEMY_SIZE, ResourceManager::GetTexture("face"));
-		EnemiesRow1.push_back(Enemy);
-		Enemy = new GameObject(EnemyPos, ENEMY_SIZE, ResourceManager::GetTexture("face"));
-		EnemiesRow2.push_back(Enemy);
-	}
-	for (int i = 0; i < 3; i++)
-	{
-		Enemies.push_back({EnemiesRow});
-		Enemies.push_back({EnemiesRow1 });
-		Enemies.push_back({ EnemiesRow2 });
-	}
-	for (int i = 0; i < Enemies.size(); i++)
-	{
-		for (int j = 0; j < Enemies[i].size(); j++)
-		{
-			Enemies[i][j]->Position.x = Width - (100 + (50 * j));
-			Enemies[i][j]->Position.y = Height - (200 + (50 * i));
-		}
-	}
+	//for (int i = 0; i < 10; i++)
+	//{
+	//	Enemy = new GameObject(EnemyPos, ENEMY_SIZE, ResourceManager::GetTexture("face"));
+	//	EnemiesRow.push_back(Enemy);
+	//	Enemy = new GameObject(EnemyPos, ENEMY_SIZE, ResourceManager::GetTexture("face"));
+	//	EnemiesRow1.push_back(Enemy);
+	//	Enemy = new GameObject(EnemyPos, ENEMY_SIZE, ResourceManager::GetTexture("face"));
+	//	EnemiesRow2.push_back(Enemy);
+	//}
+	//for (int i = 0; i < 3; i++)
+	//{
+	//	Enemies.push_back({EnemiesRow});
+	//	Enemies.push_back({EnemiesRow1 });
+	//	Enemies.push_back({ EnemiesRow2 });
+	//}
+	//for (int i = 0; i < Enemies.size(); i++)
+	//{
+	//	for (int j = 0; j < Enemies[i].size(); j++)
+	//	{
+	//		Enemies[i][j]->Position.x = Width - (100 + (50 * j));
+	//		Enemies[i][j]->Position.y = Height - (200 + (50 * i));
+	//	}
+	//}
 	//Enemies[0][0]->Position.x = 50.0f;
 	//Enemies[1][1]->Position.x = 100.0f;
 	//Enemies[2][2]->Position.x = 120.0f;
@@ -95,46 +101,9 @@ void Game::Init()
 void Game::Update(float dt)
 {
 	this->UpdateProjectiles(dt);
+	one->move(dt);
 	
-	for (int i = 0; i < Enemies.size(); i++)
-	{
-		for (int j =  0; j < Enemies[i].size(); j++)
-		{
-			if (Enemies[i][j]->Position.x > (Width - ENEMY_SIZE.x))
-			{
-				for (int i = 0; i < Enemies.size(); i++)
-				{
-					for (int j = 0; j < Enemies[i].size(); j++)
-					{
-						Enemies[i][j]->Position.y += 200.0f * dt;
-					}
-				}
-				
-				GoingLeft = true;
-			}
-			if (Enemies[i][j]->Position.x < 0)
-			{
-				for (int i = 0; i < Enemies.size(); i++)
-				{
-					for (int j = 0; j < Enemies[i].size(); j++)
-					{
-						Enemies[i][j]->Position.y += 200.0f * dt;
-					}
-				}
-				GoingLeft = false;
-			}
-			if (GoingLeft == false)
-			{
-				Enemies[i][j]->Position.x += 10.0f * dt;
-			}
-			else if(GoingLeft == true)
-			{
-				Enemies[i][j]->Position.x -= 10.0f * dt;
-			}
-			
-			
-		}
-	}
+	
 	
 }
 
@@ -164,18 +133,17 @@ void Game::ProcessInput(float dt)
 		}
 		
 		firecounter -= dt;
-		
-
-
-		
 	}
 }
 
 void Game::Render()
 {
+
 	//Texture2D myTexture;
 	//myTexture = ResourceManager::GetTexture("face");
 	//Renderer->DrawSprite(myTexture, glm::vec2(200, 200), glm::vec2(300, 400), 45.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+	
+	one->Draw(*Renderer);
 	Player->Draw(*Renderer);
 	//Enemy->Draw(*Renderer);
 	//Enemies[0]->Draw(*Renderer);
@@ -184,17 +152,19 @@ void Game::Render()
 	//{
 	//	it[0]->Draw(*Renderer);
 	//}
-	for (int i = 0; i < Enemies.size(); i++)
-	{
-		for (int j = 0; j < Enemies[0].size(); j++)
-		{
-			Enemies[i][j]->Draw(*Renderer);
-		}
-	}
+	//for (int i = 0; i < Enemies.size(); i++)
+	//{
+	//	for (int j = 0; j < Enemies[0].size(); j++)
+	//	{
+	//		Enemies[i][j]->Draw(*Renderer);
+	//	}
+	//}
 	for (auto it : projectiles)
 	{
 		it.Draw(*Renderer);
 	}
+
+	
 
 }
 
@@ -211,3 +181,45 @@ void Game::UpdateProjectiles(float dt)
 	}
 }
 
+
+void Game::Docollision()
+{
+	//for (auto enemy : Enemies[0].size())
+	//{
+	//
+	//}
+	//if (CheckCollision(*Player, *Object))
+	//{
+	//	std::cout << "colliding" << std::endl;
+	//	Player->Destroyed = true;
+	//
+	//}
+	//else
+	//{
+	//	std::cout << "not colliding" << std::endl;
+	//}
+}
+
+bool CheckCollision(GameObject& one, GameObject& two)
+{
+	if (one.Position.x > (two.Position.x + two.Size.x))
+	{
+
+		return false;
+	}
+	if ((one.Position.x + one.Size.x) < two.Position.x)
+	{
+
+		return false;
+	}
+	if (one.Position.y > (two.Position.y + two.Size.y))
+	{
+		return false;
+	}
+	if ((one.Position.y + one.Size.y) < two.Position.y)
+	{
+		return false;
+	}
+	return true;
+
+}

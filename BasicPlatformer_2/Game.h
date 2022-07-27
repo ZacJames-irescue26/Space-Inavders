@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include "projectile.h"
 #include <vector>
+#include "GameLevel.h"
 enum GameState
 {
  GAME_ACTIVE,
@@ -19,7 +20,8 @@ public:
 
 	Game(unsigned int width, unsigned int height);
 	~Game();
-
+	std::vector<GameLevel> Levels;
+	unsigned int Level;
 	void Init();
 
 	void ProcessInput(float dt);
@@ -29,6 +31,6 @@ public:
 	std::vector<Projectile> projectiles;
 	void spawnProjectiles();
 	void UpdateProjectiles(float dt);
-	void DoCollisions();
+	void Docollision();
 };
 
