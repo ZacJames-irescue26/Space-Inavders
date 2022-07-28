@@ -14,7 +14,7 @@ public:
 	glm::vec3 Color;
 	float Rotation;
 	bool IsSolid;
-	bool Destroyed;
+	bool Destroyed = false;
 
 	Texture2D Sprite;
 	GameObject();

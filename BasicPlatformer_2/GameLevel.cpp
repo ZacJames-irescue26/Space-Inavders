@@ -89,7 +89,6 @@ void GameLevel::init(std::vector<std::vector<unsigned int>> tileData, unsigned i
 
 void GameLevel::move(float dt)
 {
-	std::cout << Enemies.size() << std::endl;
 	for (int i = 0; i < Enemies.size(); i++)
 	{
 			if (Enemies[i].Position.x > (800 - ENEMY_SIZE.x))
@@ -112,7 +111,6 @@ void GameLevel::move(float dt)
 			if (GoingLeft == false)
 			{
 				Enemies[i].Position.x += 10.0f * dt;
-				std::cout << "moving right" << std::endl;
 			}
 			else if(GoingLeft == true)
 			{

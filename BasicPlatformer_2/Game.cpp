@@ -102,6 +102,7 @@ void Game::Update(float dt)
 {
 	this->UpdateProjectiles(dt);
 	one->move(dt);
+	Docollision();
 	
 	
 	
@@ -161,7 +162,8 @@ void Game::Render()
 	//}
 	for (auto it : projectiles)
 	{
-		it.Draw(*Renderer);
+		if(!it.Destroyed)
+			it.Draw(*Renderer);
 	}
 
 	
@@ -175,51 +177,62 @@ void Game::spawnProjectiles()
 
 void Game::UpdateProjectiles(float dt)
 {
-	for (Projectile &projectile : this->projectiles)
+	for (Projectile& projectile : this->projectiles)
 	{
 		projectile.Position -= projectile.Velocity * dt;
 	}
 }
 
+bool CheckCollision(Projectile& one, GameObject& two);
 
 void Game::Docollision()
 {
-	//for (auto enemy : Enemies[0].size())
-	//{
-	//
-	//}
-	//if (CheckCollision(*Player, *Object))
-	//{
-	//	std::cout << "colliding" << std::endl;
-	//	Player->Destroyed = true;
-	//
-	//}
-	//else
-	//{
-	//	std::cout << "not colliding" << std::endl;
-	//}
+	
+	//this->projectiles.push_back(Projectile(glm::vec3(0.5f, 0.5f, 1.0f), Player->Position, ResourceManager::GetTexture("face")));
+	for (GameObject& Enemy : one->Enemies)
+	{
+		for (Projectile& projectile : projectiles)
+		{
+			if (!projectile.Destroyed && !Enemy.Destroyed)
+			{
+				if (CheckCollision(projectile, Enemy))
+				{
+					std::cout << "colliding" << std::endl;
+					projectile.Destroyed = true;
+					Enemy.Destroyed = true;
+
+				}
+				else
+				{
+					//std::cout << "not colliding" << std::endl;
+				}
+			}
+			
+		}
+		
+	}
 }
 
-bool CheckCollision(GameObject& one, GameObject& two)
+bool CheckCollision(Projectile& one, GameObject& two)
 {
+
 	if (one.Position.x > (two.Position.x + two.Size.x))
 	{
-
+	
 		return false;
 	}
 	if ((one.Position.x + one.Size.x) < two.Position.x)
 	{
-
+	
 		return false;
 	}
 	if (one.Position.y > (two.Position.y + two.Size.y))
 	{
 		return false;
 	}
-	if ((one.Position.y + one.Size.y) < two.Position.y)
+	if ((one.Position.y +	one.Size.y) < two.Position.y)
 	{
 		return false;
 	}
 	return true;
-
 }
